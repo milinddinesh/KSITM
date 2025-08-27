@@ -4,6 +4,9 @@
 
 ## Tech stack 
 
-Back-end : Django 
+Back-end : Django
+
+## Set-up 
+To access DB , create y
 
 
