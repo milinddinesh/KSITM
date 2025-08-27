@@ -4,6 +4,7 @@ import json
 import re
 
 @csrf_exempt
+@csrf_exempt
 def signup(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request method'}, status=405)
@@ -15,8 +16,28 @@ def signup(request):
         mobile = data.get('mobile', '').strip()
         password = data.get('password', '')
 
-        
+        # Basic presence check
+        if not all([name, email, mobile, password]):
+            return JsonResponse({'error': 'All fields are required'}, status=400)
 
+        # Email format check
+        email_regex = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+        if not re.match(email_regex, email):
+            return JsonResponse({'error': 'Invalid email format'}, status=400)
+
+        # Mobile number check (12 digits)
+        mobile_regex = r'^\d{12}$'
+        if not re.match(mobile_regex, mobile):
+            return JsonResponse({'error': 'Mobile number must be 12 digits (country code + 10-digit number)'}, status=400)
+
+        # Password strength check
+        password_regex = r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\+\[\]{}:;<>,.?~\\/\-]).{6,}$'
+        if not re.match(password_regex, password):
+            return JsonResponse({
+                'error': 'Password must contain at least one uppercase letter, one number, and one special character.'
+            }, status=400)
+
+        # All validations passed
         return JsonResponse({'message': 'Validation passed'}, status=200)
 
     except json.JSONDecodeError:
