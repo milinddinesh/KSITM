@@ -5,7 +5,7 @@ import re
 
 from django.contrib.auth.hashers import make_password
 
-from .models import User
+from .models import User, Role
 from .utils import generate_custom_salted_hash
 
 @csrf_exempt
@@ -54,7 +54,14 @@ def signup(request):
         
 
         # Create and save user
-        user = User(name=name, email=email, mobile=mobile, password_hash=hashed_password,salt=salt,role=1)
+
+        try:
+            role_instance = Role.objects.get(id=3)
+        except Role.DoesNotExist:
+            # Handle the case where the role doesn't exist
+            return JsonResponse({'error': 'Role not found'}, status=400)
+
+        user = User(name=name, email=email, mobile=mobile, password_hash=hashed_password,salt=salt,role=role_instance)
         user.save()
 
 

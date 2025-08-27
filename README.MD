@@ -9,8 +9,11 @@ Database : Postgres
 
 ## Set-up 
 Add demo users using the seed script at /docs/seed.sql
-Run the development server using the command `python3 mananage.py runserver`
+Add global variables to a .env file before you start 
+Run the Django development server using the command `python3 mananage.py runserver`
+Run the front end server with `npm run dev`
 
-Access the site at localhost:8000
+Access the Django back-end at localhost:8000
+Access the front-end at localhost:5173
 
 
