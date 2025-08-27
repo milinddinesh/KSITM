@@ -3,7 +3,11 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import re
 
-@csrf_exempt
+from django.contrib.auth.hashers import make_password
+
+from .models import User
+from .utils import generate_custom_salted_hash
+
 @csrf_exempt
 def signup(request):
     if request.method != 'POST':
@@ -32,13 +36,30 @@ def signup(request):
 
         # Password strength check
         password_regex = r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\+\[\]{}:;<>,.?~\\/\-]).{6,}$'
+
         if not re.match(password_regex, password):
             return JsonResponse({
                 'error': 'Password must contain at least one uppercase letter, one number, and one special character.'
             }, status=400)
 
+        # Check for existing email or mobile
+        if User.objects.filter(email=email).exists():
+            return JsonResponse({'error': 'Email already registered'}, status=409)
+
+        if User.objects.filter(mobile=mobile).exists():
+            return JsonResponse({'error': 'Mobile number already registered'}, status=409)
+
+        # Generate salted hash
+        salt, hashed_password = generate_custom_salted_hash(password)
+        
+
+        # Create and save user
+        user = User(name=name, email=email, mobile=mobile, password_hash=hashed_password,salt=salt,role=1)
+        user.save()
+
+
         # All validations passed
-        return JsonResponse({'message': 'Validation passed'}, status=200)
+        return JsonResponse({'message': 'User Created'}, status=200)
 
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON format'}, status=400)
