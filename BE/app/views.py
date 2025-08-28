@@ -72,3 +72,5 @@ def signup(request):
         return JsonResponse({'error': 'Invalid JSON format'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+

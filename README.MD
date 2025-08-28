@@ -8,6 +8,8 @@ Back-end : Django
 Database : Postgres
 
 ## Set-up 
+Install requirements using the command `pip3 install -r requitements.txt`
+
 Add demo users using the seed script at /docs/seed.sql
 
 Add global variables to a .env file before you start 
